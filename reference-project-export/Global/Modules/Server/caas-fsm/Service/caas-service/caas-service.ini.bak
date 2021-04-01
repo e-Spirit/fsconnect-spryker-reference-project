@@ -1,0 +1,6 @@
+#Values from ServiceConfiguration
+#Thu Aug 22 10:15:29 CEST 2019
+defaultLinkGenerationMode=LINK_TO_METADATA
+apiKey=22938e42-93dd-493e-9dd4-eef8206262b8
+parallelConnections=8
+url=https://caas.spryker.delivery-platform.e-spirit.live

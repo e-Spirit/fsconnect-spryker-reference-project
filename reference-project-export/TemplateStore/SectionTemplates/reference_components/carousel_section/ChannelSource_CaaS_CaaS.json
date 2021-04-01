@@ -1,0 +1,38 @@
+$CMS_SET(block,{:})$
+$-- Defining general block data --$
+$CMS_SET(void, block.put("previewId", "" + previewId()))$
+$CMS_SET(void, block.put("active", "1"))$
+$CMS_SET(void, block.put("store_names", [ps_activeStore]))$
+$CMS_SET(void, block.put("template_name", "fs_molecule_block"))$
+$CMS_SET(void, block.put("template_path", "@CmsBlock/template/fs_molecule_block.twig"))$
+
+$CMS_SET(set_pageType, json.get("pagetype"))$
+
+$-- Add block name attribute to block object (page type dependent) --$
+$CMS_RENDER(template: "block_name_render", rt_pageType: set_pageType, rt_blockObject: block)$
+
+$-- Add block key attribute to block object (page type dependent) --$
+$CMS_RENDER(template: "block_key_render", rt_pageType: set_pageType, rt_blockObject: block)$
+
+$-- Add additional block attributes to block object (page type dependent) --$
+$CMS_RENDER(template: "additional_block_attributes_render", rt_pageType: set_pageType, rt_blockObject: block)$
+
+$-- Defining placeholder data of the block --$
+$CMS_SET(void, block.put("placeholder", {:}))$
+
+$CMS_SET(_items, [])$$CMS_VALUE(st_items)$
+
+$CMS_SET(void, block.put("data", {
+	#global.language.locale.language + "_" + #global.language.locale.country: {
+		"moleculename": "fs-carousel",
+		"nestedPreviewId": if (!#global.isRelease(), "#st_items"),
+		"items": _items,
+		"autoplay": if(!st_autoplay.empty && !st_autoplay.value.empty, st_autoplay.value)
+	}
+}))$
+
+$CMS_IF(#global.is("WEBEDIT") && !isSet(caas_preview_generation))$
+	$CMS_VALUE(block.toJSON)$
+$CMS_ELSE$
+	$CMS_SET(void, blocks.add(block))$
+$CMS_END_IF$

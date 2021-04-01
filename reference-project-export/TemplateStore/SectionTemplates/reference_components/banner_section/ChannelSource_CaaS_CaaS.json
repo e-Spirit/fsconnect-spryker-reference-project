@@ -1,0 +1,57 @@
+$CMS_SET(set_link, {:})$$CMS_IF(!st_link.empty)$$CMS_VALUE(st_link)$$CMS_END_IF$$CMS_SET(data, {
+	"moleculename": "fs-banner",
+
+	"picture": if (st_picture.empty, null, {
+		"imageUrl": ref(st_picture, res: "BANNER_IMAGE", abs: 1).url,
+		"previewId": if (!#global.release, previewId(element: st_picture))
+	}),
+	
+	"link": if (st_link.empty, null, set_link),
+
+	"title": if (st_title.empty, null, st_title.convert2),
+	"subtitle": if (st_subtitle.empty, null, st_subtitle.convert2),
+	"variant": if(st_variant.empty, "", st_variant.value),
+	"variantEditorName": "st_variant"
+})$
+
+
+$CMS_IF(isSet(_items))$
+
+	$CMS_SET(void, data.put("previewId", if (!#global.release, "#" + _items.size())))$
+	$CMS_SET(void, _items.add(data))$
+
+$CMS_ELSE$
+
+	$CMS_SET(block,{:})$
+	$-- Defining general block data --$
+	$CMS_SET(void, block.put("previewId", "" + previewId()))$
+	$CMS_SET(void, block.put("active", "1"))$
+	$CMS_SET(void, block.put("store_names", [ps_activeStore]))$
+	$CMS_SET(void, block.put("template_name", "fs_molecule_block"))$
+	$CMS_SET(void, block.put("template_path", "@CmsBlock/template/fs_molecule_block.twig"))$
+	
+	$CMS_SET(set_pageType, json.get("pagetype"))$
+	
+	$-- Add block name attribute to block object (page type dependent) --$
+	$CMS_RENDER(template: "block_name_render", rt_pageType: set_pageType, rt_blockObject: block)$
+	
+	$-- Add block key attribute to block object (page type dependent) --$
+	$CMS_RENDER(template: "block_key_render", rt_pageType: set_pageType, rt_blockObject: block)$
+	
+	$-- Add additional block attributes to block object (page type dependent) --$
+	$CMS_RENDER(template: "additional_block_attributes_render", rt_pageType: set_pageType, rt_blockObject: block)$
+	
+	$-- Defining placeholder data of the block --$
+	$CMS_SET(void, block.put("placeholder", {:}))$
+	
+	$CMS_SET(void, block.put("data", {
+		#global.language.locale.language + "_" + #global.language.locale.country: data
+	}))$
+	
+	$CMS_IF(#global.is("WEBEDIT") && !isSet(caas_preview_generation))$
+		$CMS_VALUE(block.toJSON)$
+	$CMS_ELSE$
+		$CMS_SET(void, blocks.add(block))$
+	$CMS_END_IF$
+
+$CMS_END_IF$

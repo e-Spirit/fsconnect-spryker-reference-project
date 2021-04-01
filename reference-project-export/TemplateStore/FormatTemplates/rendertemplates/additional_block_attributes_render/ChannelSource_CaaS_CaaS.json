@@ -1,0 +1,17 @@
+$--
+ Adds additional block attributes to the given block object.
+ Should only be used within section templates.
+
+ Usage: $CMS_RENDER(template: "additional_block_attributes_render", rt_pageType: "static", rt_blockObject: {:})$
+--$
+$CMS_IF(rt_pageType == "category")$
+	$CMS_SET(void, rt_blockObject.put("category_id", #global.node.uid.replace("category_", "")))$
+	$CMS_SET(void, rt_blockObject.put("category_position", #global.section.parent.name))$
+$CMS_ELSIF(rt_pageType == "product")$
+	$CMS_SET(void, rt_blockObject.put("product_sku", #global.page.formData.pt_productSku))$
+$CMS_END_IF$
+
+$CMS_SET(void, rt_blockObject.put("slot_key", #global.section.parent.name.replace("_","-")))$
+$CMS_SET(void, rt_blockObject.put("block_position", blocks.filter(block -> block.get("slot_key")==rt_blockObject.get("slot_key")).size+1))$
+$CMS_SET(void, rt_blockObject.put("pagetype", rt_pageType))$
+$CMS_SET(void, rt_blockObject.put("identifier", #global.node.uid))$

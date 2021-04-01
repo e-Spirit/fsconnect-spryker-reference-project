@@ -1,0 +1,19 @@
+$--
+Adds the block key for the current section dependent on the given page type to the given block object.
+Should only be used within section templates.
+
+When the current context is a contentprojection, the id of the current entity is appended
+When the current context is within a FS_CATALOG, the UID of these sections is appended
+
+Usage: $CMS_RENDER(template: "block_key_render", rt_pageType: "static", rt_blockObject: {:})$
+--$
+$CMS_SET(set_block_key, #global.section.parent.name)$
+$CMS_SET(set_block_key, set_block_key + "_" + #global.section.id)$
+$CMS_IF(#row != null && #global.multiPageParams.entitiesPerPage==1)$
+  $CMS_SET(set_block_key, set_block_key + "_" + #row.id)$
+$CMS_END_IF$
+$CMS_IF(!#fs_catalog.isNull)$
+  $CMS_SET(set_block_key, set_block_key + "_" + #card.id)$
+$CMS_END_IF$
+
+$CMS_SET(void, rt_blockObject.put("block_key", set_block_key))$
